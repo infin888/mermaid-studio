@@ -1,0 +1,15 @@
+.vs/
+.idea/
+.vscode/
+.tools/
+artifacts/
+**/bin/
+**/obj/
+**/node_modules/
+src/MermaidStudio/WebAssets/
+src/MermaidStudio.Web/coverage/
+src/MermaidStudio.Web/dist/
+*.user
+*.suo
+*.log
+TestResults/

@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: web
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20.20.0
+          cache: npm
+          cache-dependency-path: src/MermaidStudio.Web/package-lock.json
+      - run: npm ci
+        working-directory: src/MermaidStudio.Web
+      - run: npm run check
+        working-directory: src/MermaidStudio.Web
+      - run: npm run build
+        working-directory: src/MermaidStudio.Web
+
+  native:
+    name: native
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20.20.0
+          cache: npm
+          cache-dependency-path: src/MermaidStudio.Web/package-lock.json
+      - shell: pwsh
+        run: .\eng\bootstrap.ps1
+      - shell: pwsh
+        run: .\eng\lint.ps1
+      - shell: pwsh
+        run: .\eng\test.ps1
+      - shell: pwsh
+        run: npm run build
+        working-directory: src/MermaidStudio.Web
+      - shell: pwsh
+        run: dotnet build .\src\MermaidStudio\MermaidStudio.csproj -c Release -p:Platform=x64 --no-restore
+
+  package:
+    name: package
+    runs-on: windows-latest
+    timeout-minutes: 30
+    needs:
+      - web
+      - native
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20.20.0
+          cache: npm
+          cache-dependency-path: src/MermaidStudio.Web/package-lock.json
+      - shell: pwsh
+        run: .\eng\bootstrap.ps1
+      - shell: pwsh
+        run: .\eng\package.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: MermaidStudio-win-x64
+          path: artifacts/MermaidStudio-win-x64.zip
+          if-no-files-found: error
