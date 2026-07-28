@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MermaidStudio (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MermaidStudio (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

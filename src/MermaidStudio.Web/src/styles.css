@@ -1,0 +1,43 @@
+:root {
+  color: #26223d;
+  background: transparent;
+  font-family: "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+.foundation {
+  text-align: center;
+}
+
+.foundation h1 {
+  margin: 8px 0;
+  font: 600 28px/1.2 "Segoe UI Variable Display", "Segoe UI", sans-serif;
+}
+
+.foundation p,
+.eyebrow {
+  color: #686477;
+  font-size: 13px;
+}
+
+.eyebrow {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
